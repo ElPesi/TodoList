@@ -1,23 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
-import { useState } from 'react';
+
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
+  const [newTask, setNewTask] = useState({ text: '', category: '' });
 
   const handleInputChange = (e) => {
-    setNewTask(e.target.value);
+    const { name, value } = e.target;
+    setNewTask({ ...newTask, [name]: value });
   };
 
   const addTask = (e) => {
     e.preventDefault();
+    if (newTask.text.trim() === '') return;
     setTasks([...tasks, newTask]);
-    setNewTask('');
+    setNewTask({ text: '', category: '' });
   };
 
   const removeTask = (index) => {
     setTasks(tasks.filter((task, i) => i !== index));
   };
+
+  const categories = ["Estudio", "Hogar", "Salud", "Otro"];
 
   return (
     <div>
@@ -25,20 +29,37 @@ function App() {
       <form onSubmit={addTask}>
         <input
           type="text"
-          value={newTask}
+          name="text"
+          value={newTask.text}
           onChange={handleInputChange}
+          placeholder="Ingrese una tarea"
         />
+        <select
+          name="category"
+          value={newTask.category}
+          onChange={handleInputChange}
+        >
+          <option value="">Seleccione una categoría</option>
+          {categories.map((category, index) => (
+            <option key={index} value={category}>{category}</option>
+          ))}
+        </select>
         <button type="submit">Agregar</button>
       </form>
       <ul>
         {tasks.map((task, index) => (
           <li key={index}>
-            {task}
+            {task.text} - {task.category}
             <button onClick={() => removeTask(index)}>Eliminar</button>
           </li>
         ))}
       </ul>
     </div>
   );
+}
+
+export default App;
+
+
 }
 export default App;
